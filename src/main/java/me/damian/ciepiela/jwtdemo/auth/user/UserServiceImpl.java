@@ -12,10 +12,7 @@ import me.damian.ciepiela.jwtdemo.exceptions.DocumentNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,12 +31,37 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public UserGetDto registerUser(UserPostDto postDto) throws Exception {
+        if (repository.findByUsername(postDto.getUsername().toLowerCase(Locale.ROOT)).isPresent()) {
+            throw new DocumentAlreadyExistsException();
+        }
+        User user = mapper.userPostDtoToUser(postDto);
+        addRoleToUser(user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        repository.save(user);
+        return mapper.userToUserGetDto(user);
+    }
+
+    private void addRoleToUser(User user) throws DocumentNotFoundException {
+        Set<Role> roles = new HashSet<>();
+        if (repository.findAll().size() == 0) {
+            roles.add(getRoleByAuthority("OP_USER_MANAGEMENT"));
+        } else {
+            roles.add(getRoleByAuthority("BASIC_USER"));
+        }
+        user.setRoles(roles);
+    }
+
+    private Role getRoleByAuthority(String authority) throws DocumentNotFoundException {
+        return roleRepository.findByAuthorityName(authority.toUpperCase(Locale.ROOT)).orElseThrow(DocumentNotFoundException::new);
+    }
+
     @Override
     public UserGetDto createDocument(UserPostDto postDto) throws Exception {
         if (repository.findByUsername(postDto.getUsername().toLowerCase(Locale.ROOT)).isPresent()) {
             throw new DocumentAlreadyExistsException();
         }
-        List<Role> roles = findRoles(postDto.getRoles());
+        Set<Role> roles = findRoles(postDto.getRoles());
         User user = mapper.userPostDtoToUser(postDto);
         user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -78,7 +100,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(putDot.getPassword()));
         }
         if (putDot.getRoles() != null && putDot.getRoles().size() > 0) {
-            List<Role> roles = findRoles(putDot.getRoles());
+            Set<Role> roles = findRoles(putDot.getRoles());
             user.setRoles(roles);
         }
         return mapper.userToUserGetDto(repository.save(user));
@@ -90,13 +112,18 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private List<Role> findRoles(Collection<String> rolesNames) throws DocumentNotFoundException {
-        List<Role> roles = new ArrayList<>();
+    private Set<Role> findRoles(Collection<String> rolesNames) throws DocumentNotFoundException {
+        Set<Role> roles = new HashSet<>();
         for (String name : rolesNames) {
             Role role = roleRepository.findByName(name.toUpperCase(Locale.ROOT)).orElseThrow(DocumentNotFoundException::new);
             roles.add(role);
         }
         return roles;
+    }
+
+    @Override
+    public User getRawUser(String name) throws DocumentNotFoundException {
+        return repository.findByUsername(name).orElseThrow(DocumentNotFoundException::new);
     }
 
 }

@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Set;
 
 @Document("users")
 @Data @NoArgsConstructor @AllArgsConstructor
@@ -26,6 +26,6 @@ public class User extends AbstractDocument {
 
     @NotNull
     @DocumentReference
-    private List<Role> roles;
+    private Set<Role> roles;
 
 }

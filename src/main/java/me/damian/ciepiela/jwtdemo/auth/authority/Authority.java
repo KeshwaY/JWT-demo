@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
 
-@Document("Authorities")
+@Document("authorities")
 @Data @NoArgsConstructor @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Authority extends AbstractDocument {

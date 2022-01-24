@@ -12,10 +12,7 @@ import me.damian.ciepiela.jwtdemo.exceptions.DocumentNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -36,7 +33,7 @@ public class RoleServiceImpl implements RoleService {
     public RoleGetDto createDocument(RolePostDto postDto) throws Exception {
         checkIfNameAlreadyExist(postDto.getName());
         Role role = mapper.rolePostDtoToRole(postDto);
-        Collection<Authority> authorities = findAuthorities(postDto.getAuthorities());
+        Set<Authority> authorities = findAuthorities(postDto.getAuthorities());
         role.setAuthorities(authorities);
         return mapper.roleToRoleGetDto(repository.save(role));
     }
@@ -69,7 +66,7 @@ public class RoleServiceImpl implements RoleService {
             role.setName(putDot.getName().toUpperCase(Locale.ROOT));
         }
         if (putDot.getAuthorities() != null && putDot.getAuthorities().size() > 0) {
-            Collection<Authority> authorities = findAuthorities((putDot.getAuthorities()));
+            Set<Authority> authorities = findAuthorities((putDot.getAuthorities()));
             role.setAuthorities(authorities);
         }
         return mapper.roleToRoleGetDto(repository.save(role));
@@ -81,8 +78,8 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
-    private Collection<Authority> findAuthorities(Collection<String> names) throws DocumentNotFoundException {
-        Collection<Authority> authorityCollection = new ArrayList<>();
+    private Set<Authority> findAuthorities(Collection<String> names) throws DocumentNotFoundException {
+        Set<Authority> authorityCollection = new HashSet<>();
         for (String name : names) {
             Authority authority = authorityRepository.findByName(name.toUpperCase(Locale.ROOT)).orElseThrow(DocumentNotFoundException::new);
             authorityCollection.add(authority);

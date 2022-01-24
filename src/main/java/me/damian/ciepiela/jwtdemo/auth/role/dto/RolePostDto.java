@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
+import java.util.Set;
 
 @Data @AllArgsConstructor @NoArgsConstructor
 public class RolePostDto {
@@ -14,5 +14,5 @@ public class RolePostDto {
     private String name;
 
     @NotNull
-    private Collection<String> authorities;
+    private Set<String> authorities;
 }

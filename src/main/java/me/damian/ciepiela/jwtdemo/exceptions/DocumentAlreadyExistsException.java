@@ -1,6 +1,5 @@
 package me.damian.ciepiela.jwtdemo.exceptions;
 
-import me.damian.ciepiela.jwtdemo.auth.role.Role;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

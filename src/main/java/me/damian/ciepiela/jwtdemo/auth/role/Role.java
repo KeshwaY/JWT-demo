@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
+import java.util.Set;
 
 @Document("roles")
 @Data @NoArgsConstructor @AllArgsConstructor
@@ -22,6 +22,6 @@ public class Role extends AbstractDocument {
 
     @NotNull
     @DocumentReference
-    private Collection<Authority> authorities;
+    private Set<Authority> authorities;
 
 }

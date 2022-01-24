@@ -3,7 +3,8 @@ package me.damian.ciepiela.jwtdemo.auth.authority;
 import me.damian.ciepiela.jwtdemo.abstraction.GenericCRUDControllerWithOneChangeable;
 import me.damian.ciepiela.jwtdemo.auth.authority.dto.AuthorityDto;
 import me.damian.ciepiela.jwtdemo.dto.GenericResponseDto;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/authorities")
